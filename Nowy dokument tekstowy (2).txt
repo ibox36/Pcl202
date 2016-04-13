@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int * aloc(int rozmiar);
+
+int main()
+{
+ int rozmiar,i;
+ printf("Wpisz rozmiar tablicy:\n");
+ scanf("%d",&rozmiar);
+ int *t;
+ t=aloc(rozmiar);
+ if(t==NULL)
+   {
+    printf("Tablica nie istnieje");
+   }
+ else
+   {
+    for(i=0;i<rozmiar;i++)
+      {
+       printf("%d,",t[i]);
+      }
+   }
+       
+}
+
+int * aloc(int rozmiar)
+{
+ int i;
+ int * tab;
+ tab=malloc(rozmiar*sizeof(int));
+ if(tab==NULL)
+   {
+    return NULL;
+   }
+ for(i=0;i<rozmiar;i++)
+    {
+     tab[i]=(2*i)+1;
+    }
+
+ return tab;
+}

@@ -1,0 +1,212 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define ROZMIAR 64
+
+struct lista
+{
+    char imie[ROZMIAR];
+    char nazwisko[ROZMIAR];
+    int rok;
+    struct lista* nastepny;
+};
+
+void nowy_elem(struct lista**);
+void nowy_poczatek(struct lista**);
+void nowy_dalej(struct lista**);
+struct lista* szukaj_rok(struct lista *y, int z);
+void usun_elem(struct lista**);
+void usun_poczatek(struct lista**);
+void wyswietl(struct lista*);
+void freeRAM(struct lista*);
+
+
+int main(void)
+{
+    int x=0;
+    struct lista *y = NULL;
+    for(system("cls");;system("cls"))
+    {
+        printf("\nLISTA\n\n1. Dodaj nowy element.\n2. Szukaj elementu wg roku urodzenia.\n3. Usun element z poczatku.\n"
+               "4. Wyswietl dane.\nAby zakonczyc, wpisz litere.\n\nWybierz czynnosc: ");
+        if(scanf("%d", &x) == 0)
+            return 1;
+        switch (x)
+        {
+            case 1:
+                nowy_elem(&y);
+                break;
+            case 2:
+                szukaj_rok(y, 0);
+                break;
+            case 3:
+                usun_poczatek(&y);
+                break;
+            case 4:
+                wyswietl(y);
+                break;
+            default:
+                printf("\nZly wybor. Sprobuj jeszcze raz.\nAby kontynuowac wcisnij dowolny klawisz.\n.");
+                getch();
+                continue;
+        }
+    }
+    freeRAM(y);
+    return 0;
+}
+
+
+void nowy_elem(struct lista **y)
+{
+    int wybor;
+    printf("\nNowy wpis powinien zostac dodany:\n1. Na poczatku.\n2. Za wyszukanym.\n\nWybierz: ");
+    scanf("%d", &wybor);
+    switch (wybor)
+    {
+        case 1:
+            printf("\nDodawanie na poczatku.\n");
+            nowy_poczatek(y);
+            break;
+        case 2:
+            printf("\nDodawanie za wyszukanym.\n");
+            nowy_dalej(y);
+            break;
+        default:
+            printf("\nZly wybor. Sprobuj jeszcze raz.\nAby kontynuowac wcisnij dowolny klawisz.\n");
+            getch();
+    }
+    return;
+}
+
+void nowy_poczatek(struct lista **y)
+{
+    struct lista *nowy_elem;
+    nowy_elem = (struct lista*) malloc (sizeof(struct lista));
+    if (nowy_elem == NULL)
+        return;
+    printf("\nImie: ");
+    scanf("%s", nowy_elem->imie);
+    printf("Nazwisko: ");
+    scanf("%s", nowy_elem->nazwisko);
+    printf("Rok urodzenia: ");
+    scanf("%d", &(nowy_elem->rok));
+    nowy_elem->nastepny = *y;
+    *y = nowy_elem;
+    printf("\nDodano!\nAby kontynuowac wcisnij dowolny klawisz.\n");
+    getch();
+    return;
+}
+
+
+void nowy_dalej(struct lista **y)
+{
+    struct lista *nowy_elem, *poprzedni;
+    poprzedni = szukaj_rok(*y, 1);
+    if(poprzedni == NULL)
+    {
+        printf(" Wpis nie moze byc dodany.\n");
+        getch();
+        return;
+    }
+    nowy_elem = (struct lista*) malloc (sizeof(struct lista));
+    if (nowy_elem == NULL)
+        return;
+    printf("\nImie: ");
+    scanf("%s", nowy_elem->imie);
+    printf("Nazwisko: ");
+    scanf("%s", nowy_elem->nazwisko);
+    printf("Rok urodzenia: ");
+    scanf("%d", &(nowy_elem->rok));
+    nowy_elem->nastepny = poprzedni->nastepny;
+    poprzedni->nastepny = nowy_elem;
+    printf("\nDodano!\nAby kontynuowac wcisnij dowolny klawisz.\n");
+    getch();
+    return;
+}
+
+
+struct lista* szukaj_rok(struct lista *y, int z)
+{
+    int szukanyrok, i1=0, i2=0;
+    struct lista *p;
+    printf("\nWpisz rok urodzenia: ");
+    scanf("%d", &szukanyrok);
+    for(p = y; p!=NULL; p=p->nastepny, i1++)
+        if(p->rok == szukanyrok)
+        {
+            if(z)
+            {
+                return p;
+            }
+            else
+            {
+                if(!i2)
+                printf("\n\n Lp. | %15s | %15s |  Rok urodzenia\n", "Imie", "Nazwisko");
+                i2++;
+                printf("%3d. | %15s | %15s | %4d\n", i1, p->imie, p->nazwisko, p->rok);
+            }
+        }
+    if(!i2)
+        printf("\nNie znaleziono.");
+    return NULL;
+}
+
+
+
+void usun_poczatek(struct lista **y)
+{
+    struct lista *p = *y;
+    int potwierdz;
+    printf("\nCzy jestes pewny cze chcesz usunac wpis?\n");
+    printf("\nImie: ");
+    printf("%s", p->imie);
+    printf("\nNazwisko:    ");
+    printf("%s", p->nazwisko);
+    printf("\nRok urodzenia:       ");
+    printf("%d", p->rok);
+    printf("\n\nWybierz 1 - tak lub 0 - nie: ");
+    scanf("%d", &potwierdz);
+    if(potwierdz == 1)
+    {
+        free(*y);
+        *y = p->nastepny;
+        printf("\nWpis zostal usuniety.");
+    } else
+        printf("\nWpis nie zostal usuniety.");
+    return;
+}
+
+
+
+void wyswietl(struct lista* y)
+{
+    if(y == NULL)
+    {
+        printf("\nLista jest pusta. ");
+    }
+    else
+    {
+        struct lista* p;
+        int i=1;
+        printf("\n\n Lp. | %15s | %15s |  Rok urodzenia\n", "Imie", "Nazwisko");
+        for(p = y; p!=NULL; p=p->nastepny, i++)
+            printf("%3d. | %15s | %15s | %4d\n", i, p->imie, p->nazwisko, p->rok);
+    }
+    printf("\nAby kontynuowac wcisnij dowolny klawisz.\n");
+    getch();
+    return;
+}
+
+
+
+void freeRAM(struct lista *y)
+{
+    struct lista *p, *nastepny_elem;
+    for(p = y; p!=NULL; p=nastepny_elem)
+    {
+        nastepny_elem = p->nastepny;
+        free(p);
+    }
+    y = NULL;
+    return;
+}

@@ -1,0 +1,108 @@
+ 	
+Zobacz podsumowanie
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROZMIAR 8
+
+int** createMatrix(int n);
+void fillMatrix(int** tab, int n);
+void copyMatrix(int*** pdest, int** src, int n);
+void deleteMatrix(int*** ptab, int n);
+
+
+int main()
+{
+ int n;
+ n=ROZMIAR;
+ int** tab;
+ int** tab2;
+ tab=createMatrix(n);
+ if(tab==NULL)
+ {
+    printf("Blad pamieci\n");
+    return -1;
+ }
+ fillMatrix(tab, n);
+ tab2 = createMatrix(n);
+    if(tab2 == NULL)
+    {
+        printf("Blad pamieci\n");
+        return -1;
+    }
+ copyMatrix(&tab2, tab, n);
+ int i,j;
+ for(i=0;i<n;i++)
+ {
+     for(j=0;j<n;j++)
+     {
+         printf("%4d", tab2[i][j]);
+     }
+     printf("\n");
+ }
+ deleteMatrix(&tab,n);
+ deleteMatrix(&tab2,n);
+ return 0;
+}
+
+int** createMatrix(int n)
+{
+ int**tab;
+ int i;
+ tab=malloc(n*sizeof(int));
+ if(tab==NULL)
+    return NULL;
+ for(i=0;i<n;i++)
+ {
+    tab[i]=malloc(n*sizeof(int));
+    if(tab[i]==NULL)
+    {
+       deleteMatrix(&tab,i);
+       return NULL;
+    }
+ }
+ return tab;
+}
+
+void fillMatrix(int** tab, int n)
+{
+ int k=1;
+ int i,j;
+ for(i=0;i<n;i++)
+ {
+     for(j=0;j<n;j++)
+     {
+         tab[i][j]=k++;
+     }
+ }
+ return;
+}
+
+void copyMatrix(int*** pdest, int** src, int n)
+{
+ int **dest=createMatrix(n);
+ if(*dest==NULL)
+    return;
+ int i,j;
+ for(i=0;i<n;i++)
+ {
+     for(j=0;j<n;j++)
+     {
+         dest[i][j]=src[i][j];
+     }
+ }
+ *pdest=dest;
+ return;
+}
+
+void deleteMatrix(int*** ptab, int n)
+{
+ int i;
+ for(i=0;i<n;i++)
+ {
+    free((*ptab)[i]);
+ }
+ free(*ptab);
+ return;
+}

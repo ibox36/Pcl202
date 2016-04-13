@@ -1,0 +1,44 @@
+ 	
+Zobacz podsumowanie
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int * add(int* tab, int n, int new_elem);
+
+int main()
+{
+ int i,n,new_elem;
+ int *tab=NULL;
+ for(n=0;n<10;n++)
+    {
+     new_elem=n;
+     tab=add(tab,n,new_elem);
+    }
+
+ for(i=0;i<10;i++)
+    {
+     printf("%d,",tab[i]);
+    }
+}
+
+int * add(int* tab, int n, int new_elem)
+{
+ int i;
+ int * t;
+ t=malloc((n+1)*sizeof(int));
+ if(t==NULL)
+   {
+    return NULL;
+   }
+ else
+   {
+    for(i=0;i<n;i++)
+      {
+       t[i]=tab[i];
+      }
+   }
+ t[n]=new_elem;  
+ free(tab);
+ return t;
+}
